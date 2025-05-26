@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Área do Entregador</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Cliente</title>
     <style>
         body {
             background-color: #f3f4f6;
@@ -12,7 +12,7 @@
             padding: 20px;
         }
         .container {
-            max-width: 900px;
+            max-width: 600px;
             margin: auto;
             background: white;
             padding: 30px;
@@ -22,246 +22,131 @@
         h2 {
             text-align: center;
             color: #1f2937;
-            margin-bottom: 25px;
-        }
-        .pedido {
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            background: #fafafa;
-        }
-        .pedido p {
-            margin: 6px 0;
-            color: #374151;
         }
         label {
+            display: block;
+            margin-top: 15px;
             font-weight: 600;
-            margin-right: 10px;
-            color: #4b5563;
+            color: #374151;
         }
-        input[type="text"] {
-            padding: 6px;
-            border-radius: 5px;
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
             border: 1px solid #d1d5db;
-            width: 200px;
-            margin-right: 10px;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
         }
         button {
-            padding: 8px 15px;
-            margin-right: 8px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
-        }
-        button.atribuir {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
             background-color: #2563eb;
             color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
         }
-        button.atribuir:hover {
+        button:hover {
             background-color: #1d4ed8;
         }
-        button.concluir {
-            background-color: #16a34a;
-            color: white;
-        }
-        button.concluir:hover {
-            background-color: #15803d;
-        }
-        button.rota {
-            background-color: #ef4444;
-            color: white;
-        }
-        button.rota:hover {
-            background-color: #b91c1c;
-        }
-        #mensagem {
-            margin-top: 15px;
-            padding: 12px;
+        .success {
+            margin-top: 20px;
             background-color: #d1fae5;
             color: #065f46;
+            padding: 10px;
             border-radius: 8px;
             text-align: center;
-            display: none;
+        }
+        .link-entregador {
+            text-align: center;
+            margin-top: 15px;
         }
         @media (max-width: 600px) {
-            input[type="text"] {
-                width: 100%;
-                margin-bottom: 10px;
-            }
-            button {
-                width: 100%;
-                margin-bottom: 10px;
+            .container {
+                padding: 20px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Área do Entregador - Pedidos Pendentes</h2>
-
-        <div id="listaPedidos">
-            <!-- Pedidos aparecerão aqui -->
+        <h2>Cadastro de Cliente</h2>
+        <div class="link-entregador">
+            <a href="entregador.html">Área do Entregador</a>
         </div>
 
-        <div id="mensagem"></div>
+        <label>Nome</label>
+        <input type="text" id="nome" placeholder="Digite seu nome">
+
+        <label>Endereço</label>
+        <input type="text" id="endereco" placeholder="Digite seu endereço">
+
+        <label>Bairro</label>
+        <input type="text" id="bairro" placeholder="Digite seu bairro">
+
+        <label>Tipo de Cesta</label>
+        <select id="cesta">
+            <option value="">Selecione</option>
+            <option value="Cesta Mini">Cesta Mini</option>
+            <option value="Cesta Pequena">Cesta Pequena</option>
+            <option value="Cesta Média">Cesta Média</option>
+            <option value="Cesta Básica nº1">Cesta Básica nº1</option>
+            <option value="Cesta Básica nº3">Cesta Básica nº3</option>
+            <option value="Cesta Família">Cesta Família</option>
+        </select>
+
+        <label>Valor</label>
+        <input type="text" id="valor" placeholder="Digite o valor">
+
+        <button onclick="enviar()">Cadastrar Pedido</button>
+
+        <div id="mensagem" class="success" style="display: none;">
+            Pedido enviado com sucesso!
+        </div>
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbxTs9fj45puwoHNo7bcrPb-ZFtE9UQnDZKpdhKt5EBiahX5DQ3RnbioKks9jcFODKAe/exec'; // ⚠️ Use seu URL do Apps Script aqui
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxTs9fj45puwoHNo7bcrPb-ZFtE9UQnDZKpdhKt5EBiahX5DQ3RnbioKks9jcFODKAe/exec'; // 🔥 Substituir pelo link do seu Apps Script
 
-        // Função para buscar e listar pedidos pendentes/aguardando
-        async function listarPedidos() {
-            try {
-                const response = await fetch(`${API_URL}?action=listar`);
-                const pedidos = await response.json();
+        function enviar() {
+            const nome = document.getElementById('nome').value.trim();
+            const endereco = document.getElementById('endereco').value.trim();
+            const bairro = document.getElementById('bairro').value.trim();
+            const cesta = document.getElementById('cesta').value;
+            const valor = document.getElementById('valor').value.trim();
 
-                const listaDiv = document.getElementById('listaPedidos');
-                listaDiv.innerHTML = '';
+            if (!nome || !endereco || !bairro || !cesta || !valor) {
+                alert('Por favor, preencha todos os campos!');
+                return;
+            }
 
-                // Filtra pedidos que estão Pendente ou Aguardando ou status que você quiser mostrar
-                const pedidosPendentes = pedidos.filter(p => 
-                    p.STATUS === 'Pendente' || 
-                    p.STATUS === 'Aguardando' ||
-                    p.STATUS === 'Em Entrega'
-                );
+            const url = `${API_URL}?action=inserir&nome=${encodeURIComponent(nome)}&endereco=${encodeURIComponent(endereco)}&bairro=${encodeURIComponent(bairro)}&cesta=${encodeURIComponent(cesta)}&valor=${encodeURIComponent(valor)}`;
 
-                if (pedidosPendentes.length === 0) {
-                    listaDiv.innerHTML = '<p>Nenhum pedido pendente no momento.</p>';
-                    return;
-                }
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('mensagem').style.display = 'block';
 
-                pedidosPendentes.forEach(pedido => {
-                    const pedidoDiv = document.createElement('div');
-                    pedidoDiv.className = 'pedido';
+                    // Limpa os campos
+                    document.getElementById('nome').value = '';
+                    document.getElementById('endereco').value = '';
+                    document.getElementById('bairro').value = '';
+                    document.getElementById('cesta').value = '';
+                    document.getElementById('valor').value = '';
 
-                    pedidoDiv.innerHTML = `
-                        <p><strong>Nome:</strong> ${pedido.NOME}</p>
-                        <p><strong>Endereço:</strong> ${pedido.ENDERECO}</p>
-                        <p><strong>Bairro:</strong> ${pedido.BAIRRO}</p>
-                        <p><strong>Tipo de Cesta:</strong> ${pedido.CESTA}</p>
-                        <p><strong>Valor:</strong> R$ ${pedido.VALOR}</p>
-                        <p><strong>Status:</strong> ${pedido.STATUS}</p>
-
-                        <label for="entregador_${pedido.NUMERO}">Seu nome:</label>
-                        <input type="text" id="entregador_${pedido.NUMERO}" placeholder="Digite seu nome" />
-
-                        <button class="atribuir" onclick="atribuirEntregador('${pedido.NUMERO}')">Assumir Pedido</button>
-                        <button class="concluir" onclick="finalizarPedido('${pedido.NUMERO}')">Finalizar Pedido</button>
-                        <button class="rota" onclick="abrirRota('${encodeURIComponent(pedido.ENDERECO)}')">Abrir rota no Maps</button>
-                    `;
-
-                    listaDiv.appendChild(pedidoDiv);
+                    setTimeout(() => {
+                        document.getElementById('mensagem').style.display = 'none';
+                    }, 4000);
+                })
+                .catch(err => {
+                    alert('Erro ao enviar os dados');
+                    console.error(err);
                 });
-            } catch (error) {
-                console.error('Erro ao carregar pedidos:', error);
-                document.getElementById('listaPedidos').innerHTML = '<p>Erro ao carregar pedidos. Tente novamente.</p>';
-            }
         }
-
-        // Função para abrir Google Maps com rota da localização atual até o endereço de destino
-        function abrirRota(destino) {
-            if (!navigator.geolocation) {
-                alert('Geolocalização não suportada pelo seu navegador.');
-                return;
-            }
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    const lat = pos.coords.latitude;
-                    const lon = pos.coords.longitude;
-                    // URL com origem lat,lon e destino endereco (url encoded)
-                    const url = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${destino}&travelmode=driving`;
-                    window.open(url, '_blank');
-                },
-                (error) => {
-                    alert('Não foi possível obter sua localização. Por favor, permita o acesso à localização.');
-                }
-            );
-        }
-
-        // Função para atribuir entregador e atualizar status para "Em Entrega"
-        async function atribuirEntregador(numero) {
-            const entregadorInput = document.getElementById(`entregador_${numero}`);
-            const entregador = entregadorInput.value.trim();
-
-            if (!entregador) {
-                alert('Por favor, digite seu nome para assumir o pedido.');
-                return;
-            }
-
-            try {
-                const url = `${API_URL}?action=atualizar&numero=${encodeURIComponent(numero)}&entregador=${encodeURIComponent(entregador)}&status=Em Entrega`;
-                const response = await fetch(url);
-                const result = await response.json();
-
-                if (result.status === 'atualizado') {
-                    mostrarMensagem('Pedido assumido com sucesso!');
-                    listarPedidos();
-                } else {
-                    mostrarMensagem('Erro ao assumir pedido: ' + result.status, true);
-                }
-            } catch (error) {
-                mostrarMensagem('Erro ao assumir pedido.', true);
-                console.error(error);
-            }
-        }
-
-        // Função para finalizar pedido (status "Entregue")
-async function finalizarPedido(numero) {
-    if (!confirm('Confirma que deseja finalizar este pedido?')) return;
-
-    try {
-        const entregadorInput = document.getElementById(`entregador_${numero}`);
-        let entregador = '';
-
-        // Verifica se o campo do nome do entregador ainda existe
-        if (entregadorInput) {
-            entregador = entregadorInput.value.trim();
-        }
-
-        // Se não encontrou no input, busca na planilha o nome atual do entregador
-        if (!entregador) {
-            const response = await fetch(`${API_URL}?action=listar`);
-            const pedidos = await response.json();
-            const pedido = pedidos.find(p => p.NUMERO === numero);
-            entregador = pedido ? (pedido.ENTREGADOR || '') : '';
-        }
-
-        const url = `${API_URL}?action=atualizar&numero=${encodeURIComponent(numero)}&entregador=${encodeURIComponent(entregador)}&status=Entregue`;
-        const resp = await fetch(url);
-        const res = await resp.json();
-
-        if (res.status === 'atualizado') {
-            mostrarMensagem('Pedido finalizado com sucesso!');
-            listarPedidos(); // Atualiza a lista, removendo o pedido da tela
-        } else {
-            mostrarMensagem('Erro ao finalizar pedido: ' + res.status, true);
-        }
-    } catch (error) {
-        mostrarMensagem('Erro ao finalizar pedido.', true);
-        console.error(error);
-    }
-}
-
-        function mostrarMensagem(texto, isErro = false) {
-            const msgDiv = document.getElementById('mensagem');
-            msgDiv.style.display = 'block';
-            msgDiv.style.backgroundColor = isErro ? '#fee2e2' : '#d1fae5';
-            msgDiv.style.color = isErro ? '#b91c1c' : '#065f46';
-            msgDiv.textContent = texto;
-
-            setTimeout(() => {
-                msgDiv.style.display = 'none';
-            }, 4000);
-        }
-
-        // Inicializa a listagem e atualiza a cada 15 segundos
-        listarPedidos();
-        setInterval(() => {
-            listarPedidos();
-        }, 15000);
     </script>
 </body>
 </html>
